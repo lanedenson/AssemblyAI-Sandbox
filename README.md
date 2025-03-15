@@ -26,7 +26,7 @@ A Python-based tool for automated audio transcription using AssemblyAI's API. Th
 ├── output/ # Transcription text files are saved here
 ├── .env # Environment variables (API key)
 ├── simple-transcribe.py # Main transcription script
-└── delete_all_transcripts.py # Transcript management script
+└── delete-transcripts.py # Transcript management script
 ```
 
 ## Setup
