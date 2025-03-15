@@ -10,7 +10,6 @@ A Python-based tool for automated audio transcription using AssemblyAI's API. Th
 - Moves processed files to a completed folder
 - Saves transcripts to an output directory
 - Option to delete individual transcripts from AssemblyAI after processing
-- Option to delete all existing transcripts from AssemblyAI before processing
 
 ### Transcript Management (`delete-transcripts.py`)
 - Manages both local and remote transcripts
@@ -21,14 +20,14 @@ A Python-based tool for automated audio transcription using AssemblyAI's API. Th
 
 ## Directory Structure
 
-.
+```
 ├── input/ # Place audio files here for transcription
 │ └── completed/ # Processed audio files are moved here
 ├── output/ # Transcription text files are saved here
 ├── .env # Environment variables (API key)
 ├── simple-transcribe.py # Main transcription script
 └── delete_all_transcripts.py # Transcript management script
-
+```
 
 ## Setup
 
@@ -67,7 +66,7 @@ To manage existing transcripts:
 
 1. Run the management script:
 ```bash
-python delete_all_transcripts.py
+python delete-transcripts.py
 ```
 - You'll be prompted about deleting local transcripts
 - You'll be prompted about deleting remote transcripts
@@ -79,16 +78,6 @@ python delete_all_transcripts.py
 - Keep your API key secure and never commit the `.env` file
 - Transcript deletions cannot be undone
 - The scripts include confirmation prompts before deletions
-- Progress updates are provided during all operations
-
-## Error Handling
-
-Both scripts include comprehensive error handling:
-- Environment setup verification
-- API key validation
-- File operation error handling
-- Detailed error reporting
-- Operation summaries with success/failure counts
 
 ## Contributing
 
@@ -98,7 +87,7 @@ Feel free to submit issues, fork the repository, and create pull requests for an
 
 MIT License
 
-Copyright (c) 2024 [Your Name]
+Copyright (c) 2025 Lane Denson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
