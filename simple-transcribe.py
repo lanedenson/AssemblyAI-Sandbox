@@ -30,18 +30,38 @@ def get_output_filename(input_path):
     return os.path.join(OUTPUT_DIR, f"{input_stem}.txt")
 
 def process_audio_files():
+    # Configure transcription options
+    config = aai.TranscriptionConfig(
+        speaker_labels=True
+    )
+    
     transcriber = aai.Transcriber()
     
     # Get list of supported audio file extensions
     AUDIO_EXTENSIONS = ('.mp3', '.mp4', '.wav', '.m4a', '.flac')
     
+    # Debug: Print current directory and input directory contents
+    print(f"\nInput directory: {os.path.abspath(INPUT_DIR)}")
+    print("Files in input directory:")
+    all_files = os.listdir(INPUT_DIR)
+    for file in all_files:
+        print(f"- {file}")
+    
     # Process each audio file in input directory
+    found_audio = False
     for filename in os.listdir(INPUT_DIR):
         # Skip the completed directory itself
         if filename == "completed":
             continue
             
+        # Debug: Print file extension check
+        file_ext = os.path.splitext(filename)[1].lower()
+        print(f"\nChecking file: {filename}")
+        print(f"File extension: {file_ext}")
+        print(f"Is audio file: {file_ext in AUDIO_EXTENSIONS}")
+        
         if filename.lower().endswith(AUDIO_EXTENSIONS):
+            found_audio = True
             input_path = os.path.join(INPUT_DIR, filename)
             output_path = get_output_filename(input_path)
             completed_path = os.path.join(COMPLETED_DIR, filename)
@@ -57,13 +77,29 @@ def process_audio_files():
                 print(f"Processing {filename}...")
             
             try:
-                transcript = transcriber.transcribe(input_path)
+                transcript = transcriber.transcribe(input_path, config=config)
                 
                 if transcript.status == aai.TranscriptStatus.error:
                     print(f"Error processing {filename}: {transcript.error}")
                 else:
-                    # Write transcript to output file
+                    # Write transcript and analysis to output file
                     with open(output_path, 'w', encoding='utf-8') as f:
+                        # Write summary if available
+                        if transcript.summary:
+                            f.write("=== Summary ===\n\n")
+                            f.write(transcript.summary)
+                            f.write("\n\n")
+                        
+                        # Write speaker labels if available
+                        if transcript.utterances:
+                            f.write("=== Speaker Labels ===\n\n")
+                            for utterance in transcript.utterances:
+                                f.write(f"Speaker {utterance.speaker}: {utterance.text}\n")
+                            f.write("\n\n")
+                        
+                        # Write raw transcript at the bottom
+                        f.write("=" * 80 + "\n")
+                        f.write("=== Raw Transcript ===\n\n")
                         f.write(transcript.text)
                     
                     # Move the processed file to completed directory
@@ -81,6 +117,12 @@ def process_audio_files():
                     
             except Exception as e:
                 print(f"Error processing {filename}: {str(e)}")
+    
+    if not found_audio:
+        print("\nNo audio files found with supported extensions:", AUDIO_EXTENSIONS)
+        print("Make sure your audio files:")
+        print("1. Are directly in the 'input' directory (not in 'input/completed')")
+        print("2. Have one of these extensions:", AUDIO_EXTENSIONS)
 
 if __name__ == "__main__":
     # Process audio files
